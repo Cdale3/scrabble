@@ -1,22 +1,15 @@
 require './lib/scrabble'
 class GameReader
-  attr_reader :scrabble_word
 
-  def initialize(scrabble_word)
-    @scrabble_word = scrabble_word.upcase.split("")
-    @word_score = Scrabble.new.point_values
+  def initialize(file)
+    @player_data = parse_data(file)
   end
 
-  def score_with_multipliers(word, array)
-     score = @word_score
-    score.each do |letter, scrabble_word| puts scrabble_word
+  def parse_data(file)
+    players_hash = {player_1: [], player_2: [] }
+    CSV.foreach(file, headers: true) do |row|
+      players_hash["player_#{row["player_id"]}".to_sym] << row["word"]
     end
-    # p word
-    # p array
+  players_hash
   end
 end
-
-
-#
-# game = Scrabble.new
-# game.score_with_multipliers('hello', [1,2,1,1,1])  # => 9

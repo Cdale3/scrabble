@@ -3,7 +3,27 @@ require './lib/game_reader'
   class Scrabble
 
     def score(word)
-      1
+      numbers = word.chars.map do |letter| #word.chars #=> ["h", "e", "l", "l", "o"]
+        point_values[letter.capitalize] #=> [4, 1, 1, 1, 1]
+      end
+      numbers.reduce(:+)
+    end
+
+    def score_with_multipliers(word, multiplier, word_bonus=1)
+      letters = word.chars
+      numbers = letters.map.with_index { |letter, index| point_values[letter.capitalize] * multipliers[index] }
+      numbers.reduce(:+) * word_bonus
+    end
+
+    def highest_scoring_word(words)
+      sorted_words = words.sort_by { |word| word.length }
+      possibles = sorted_words.group_by { |word| score(word) }.max[1]
+      return possibles.find { |w| w.length == 7 } if possibles.any? { |word| word.length == 7 }
+      possibles.first
+    end
+
+    def another_highest_score(words)
+
     end
 
     def point_values
@@ -18,3 +38,10 @@ require './lib/game_reader'
       }
     end
   end
+
+game = Scrabble.new
+puts game.score("hello", [2, 2, 2, 2, 2])
+puts game.score("hello", [2, 2, 2, 2, 2], 2)
+puts game.score("hello")
+puts game.score("hello")
+puts game.score("hello")
